@@ -1,231 +1,228 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nifty Planner — Final Fixed</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Nifty Planner — Minimal (Local NSE)</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
   <style>
-    body { padding:20px; background:#f6f8fb; }
-    .card { box-shadow:0 6px 18px rgba(0,0,0,0.06); }
-    .log-box { height:180px; overflow:auto; background:#0b1220; color:#cfe8ff; padding:10px; border-radius:6px; font-family:monospace; font-size:13px; }
-    .text-profit { color:#0a7a0a; font-weight:600; }
-    .text-loss { color:#c82333; font-weight:600; }
+    body{padding:16px;background:#f7fafc}
+    .log-box{height:120px;overflow:auto;background:#07121a;color:#cfe8ff;padding:8px;border-radius:6px;font-family:monospace}
+    .text-profit{color:#0a7a0a;font-weight:700}
+    .text-loss{color:#c82333;font-weight:700}
+    .badge-green{background:#0a7a0a;color:white;padding:6px;border-radius:6px}
+    .badge-red{background:#a30000;color:white;padding:6px;border-radius:6px}
   </style>
 </head>
-
 <body>
-
 <div class="container">
-  <h3 class="mb-3">Nifty Planner — Final Error-Free Version</h3>
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h3>Nifty Planner — Minimal</h3>
+    <div id="refreshBadge" class="badge-red">Auto-refresh: OFF</div>
+  </div>
 
   <div class="row g-3">
-    <!-- LEFT -->
-    <div class="col-lg-5">
+    <div class="col-lg-4">
       <div class="card p-3">
+        <label>NIFTY Spot</label>
+        <input id="spot" class="form-control" type="number" value="26226">
 
-        <div class="mb-2">
-          <label>NIFTY Spot</label>
-          <input id="spot" class="form-control" type="number" value="26226">
+        <label class="mt-2">Safe distance (pts)</label>
+        <input id="safeDist" class="form-control" type="number" value="300">
+
+        <label class="mt-2">Hedge distance (pts)</label>
+        <input id="hedgeDist" class="form-control" type="number" value="1000">
+
+        <label class="mt-2">Strike interval (pts)</label>
+        <input id="strikeInterval" class="form-control" type="number" value="50">
+
+        <label class="mt-2">Expiry</label>
+        <select id="expiry" class="form-select">
+          <option value="20251128">2025-02-27 (Monthly)</option>
+          <option value="20250206">2025-02-06 (Weekly)</option>
+          <option value="20250213">2025-02-13 (Weekly)</option>
+          <option value="20250220">2025-02-20 (Weekly)</option>
+        </select>
+
+        <div class="d-flex gap-2 mt-3">
+          <button id="autoSuggest" class="btn btn-warning">Auto-suggest</button>
+          <button id="useBtn" class="btn btn-secondary">Use</button>
         </div>
 
-        <div class="row g-2 mb-2">
-          <div class="col-6">
-            <label>Lot Size</label>
-            <input id="lotSize" class="form-control" type="number" value="50">
-          </div>
-          <div class="col-6">
-            <label>Capital</label>
-            <input id="capital" class="form-control" type="number" value="100000">
-          </div>
+        <hr/>
+
+        <label>Sell Call Strike</label>
+        <input id="sellCall" class="form-control">
+
+        <label class="mt-2">Sell Put Strike</label>
+        <input id="sellPut" class="form-control">
+
+        <label class="mt-2">Hedge Call Strike</label>
+        <input id="hedgeCall" class="form-control">
+
+        <label class="mt-2">Hedge Put Strike</label>
+        <input id="hedgePut" class="form-control">
+
+        <div class="form-check form-switch mt-3">
+          <input id="liveToggle" class="form-check-input" type="checkbox">
+          <label class="form-check-label">Live (auto-fetch sell premiums)</label>
         </div>
 
-        <hr>
-
-        <div class="mb-2">
-          <label>Safe Distance</label>
-          <input id="safeDist" class="form-control" type="number" value="300">
-        </div>
-
-        <div class="row g-2">
-          <div class="col-6">
-            <label>Hedge Distance</label>
-            <input id="hedgeDist" class="form-control" value="1000">
-          </div>
-          <div class="col-6">
-            <label>Strike Interval</label>
-            <input id="strikeInterval" class="form-control" value="50">
-          </div>
-        </div>
-
-        <button class="btn btn-warning mt-3" id="autoSuggestBtn">Auto-Suggest</button>
-
-        <hr>
-
-        <div class="row g-2">
-          <div class="col-6">
-            <label>Sell Call Strike</label>
-            <input id="callStrike" class="form-control">
-          </div>
-          <div class="col-6">
-            <label>Sell Put Strike</label>
-            <input id="putStrike" class="form-control">
-          </div>
-        </div>
-
-        <div class="row g-2 mt-2">
-          <div class="col-6">
-            <label>Hedge Call</label>
-            <input id="hedgeCallStrike" class="form-control">
-          </div>
-          <div class="col-6">
-            <label>Hedge Put</label>
-            <input id="hedgePutStrike" class="form-control">
-          </div>
-        </div>
-
-        <hr>
-
-        <div class="form-check form-switch mb-2">
-          <input class="form-check-input" id="liveToggle" type="checkbox">
-          <label class="form-check-label">Fetch Live Premiums</label>
-        </div>
-
-        <div class="row g-2">
-          <div class="col-6">
-            <label>Call Premium</label>
-            <input id="callPremium" class="form-control" value="0">
-          </div>
-          <div class="col-6">
-            <label>Put Premium</label>
-            <input id="putPremium" class="form-control" value="0">
-          </div>
+        <div class="form-check mt-2">
+          <input id="autoRefresh" class="form-check-input" type="checkbox">
+          <label class="form-check-label">Auto-refresh every 10s while Live ON</label>
         </div>
 
         <div class="d-flex gap-2 mt-3">
           <button id="fetchBtn" class="btn btn-primary">Fetch Now</button>
-          <button id="calcBtn" class="btn btn-success">Calculate</button>
+          <button id="fetchAllBtn" class="btn btn-info">Fetch All 4</button>
         </div>
-
       </div>
     </div>
 
-    <!-- RIGHT -->
-    <div class="col-lg-7">
+    <div class="col-lg-8">
       <div class="card p-3 mb-3">
-        <h6>Scenario Table</h6>
-        <table class="table table-bordered table-sm" id="scenarioTable">
-          <thead class="table-light">
-            <tr><th>Move</th><th>New Spot</th><th>P&L per Lot</th></tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+        <h6>Premiums</h6>
+        <div class="row g-2">
+          <div class="col-6"><div class="small text-muted">Sell Call (CE)</div><div id="sellCallPrem">-</div></div>
+          <div class="col-6"><div class="small text-muted">Sell Put (PE)</div><div id="sellPutPrem">-</div></div>
+          <div class="col-6 mt-2"><div class="small text-muted">Hedge Call (CE)</div><div id="hedgeCallPrem">-</div></div>
+          <div class="col-6 mt-2"><div class="small text-muted">Hedge Put (PE)</div><div id="hedgePutPrem">-</div></div>
+        </div>
+
+        <hr/>
+        <h6>Scenario Table (±100..±900)</h6>
+        <div id="scenarioArea"></div>
       </div>
 
       <div class="card p-3">
         <h6>Logs</h6>
-        <div id="logs" class="log-box"></div>
+        <pre id="logs" class="log-box"></pre>
       </div>
     </div>
   </div>
 </div>
 
 <script>
+const $ = id => document.getElementById(id);
+function flog(msg){ $('logs').textContent = (new Date().toLocaleTimeString()) + ' — ' + msg + '\\n' + $('logs').textContent; }
+function roundToNearest(x, step){ return Math.round(x/step)*step; }
 
-/* Helper */
-function el(id){ return document.getElementById(id); }
-function log(msg){
-  el("logs").innerHTML = `<div>${new Date().toLocaleTimeString()} — ${msg}</div>` + el("logs").innerHTML;
-}
+$('autoSuggest').addEventListener('click', ()=>{
+  const spot = Number($('spot').value) || 0;
+  const safe = Number($('safeDist').value) || 300;
+  const hedge = Number($('hedgeDist').value) || 1000;
+  const step = Number($('strikeInterval').value) || 50;
+  const sc = roundToNearest(spot + safe, step);
+  const sp = roundToNearest(spot - safe, step);
+  const hc = roundToNearest(sc + hedge, step);
+  const hp = roundToNearest(sp - hedge, step);
+  $('sellCall').value = sc; $('sellPut').value = sp; $('hedgeCall').value = hc; $('hedgePut').value = hp;
+  flog('Auto-suggest applied: ' + sc + ' / ' + sp);
+});
 
-function roundStrike(v, step){
-  return Math.round(v / step) * step;
-}
+$('useBtn').addEventListener('click', ()=> flog('Using current suggested strikes'));
 
-/* Auto Suggest */
-el("autoSuggestBtn").onclick = () => {
-  const spotVal = Number(el("spot").value);
-  const safe = Number(el("safeDist").value);
-  const hedge = Number(el("hedgeDist").value);
-  const step = Number(el("strikeInterval").value);
+async function fetchLive(all4=false){
+  const sellCall = $('sellCall').value;
+  const sellPut = $('sellPut').value;
+  const hedgeCall = $('hedgeCall').value;
+  const hedgePut = $('hedgePut').value;
+  const expiry = $('expiry').value;
+  if(!sellCall || !sellPut){ flog('Enter Sell strikes first'); return; }
 
-  const sellCall = roundStrike(spotVal + safe, step);
-  const sellPut  = roundStrike(spotVal - safe, step);
-  const hedgeCall = roundStrike(sellCall + hedge, step);
-  const hedgePut  = roundStrike(sellPut - hedge, step);
+  $('fetchBtn').disabled = true; $('fetchAllBtn').disabled = true;
+  flog('Calling backend for premiums (expiry ' + expiry + ')');
 
-  el("callStrike").value = sellCall;
-  el("putStrike").value  = sellPut;
-  el("hedgeCallStrike").value = hedgeCall;
-  el("hedgePutStrike").value = hedgePut;
-
-  log(`Auto-selected: CE=${sellCall}, PE=${sellPut}`);
-};
-
-/* Fetch Premiums */
-async function fetchPremiums(){
-  const ce = el("callStrike").value;
-  const pe = el("putStrike").value;
-
-  log(`Calling backend for CE=${ce}, PE=${pe}`);
-
-  const res = await fetch(`/fetch-premiums?call=${ce}&put=${pe}`);
-  const data = await res.json();
-
-  el("callPremium").value = data.callPremium;
-  el("putPremium").value = data.putPremium;
-
-  log(`Fetched: ${JSON.stringify(data)}`);
-}
-
-el("fetchBtn").onclick = fetchPremiums;
-
-el("liveToggle").onchange = () => {
-  if(el("liveToggle").checked){
-    fetchPremiums();
+  try {
+    const url = `/fetch-live?sellCall=${encodeURIComponent(sellCall)}&sellPut=${encodeURIComponent(sellPut)}&hedgeCall=${encodeURIComponent(hedgeCall)}&hedgePut=${encodeURIComponent(hedgePut)}&expiry=${encodeURIComponent(expiry)}`;
+    flog('url ' + url);
+    const res = await fetch(url);
+    if(!res.ok){ flog('Backend HTTP ' + res.status); return; }
+    const data = await res.json();
+    $('sellCallPrem').innerText = data.sellCallPremium ?? 0;
+    $('sellPutPrem').innerText = data.sellPutPremium ?? 0;
+    $('hedgeCallPrem').innerText = data.hedgeCallPremium ?? 0;
+    $('hedgePutPrem').innerText = data.hedgePutPremium ?? 0;
+    flog('Received premiums: ' + JSON.stringify(data));
+    buildScenarioTable();
+  } catch (err) {
+    flog('Fetch error: ' + (err.message || err));
+  } finally {
+    $('fetchBtn').disabled = false; $('fetchAllBtn').disabled = false;
   }
-};
+}
 
-/* Calculate Scenario Table */
-el("calcBtn").onclick = () => {
-  const spot = Number(el("spot").value);
-  const ceStrike = Number(el("callStrike").value);
-  const peStrike = Number(el("putStrike").value);
-  const cp = Number(el("callPremium").value);
-  const pp = Number(el("putPremium").value);
-  const lot = Number(el("lotSize").value);
+let refreshTimer = null;
+let countdown = 10;
+let countdownInt = null;
+function setBadge(on){
+  const b = $('refreshBadge');
+  if(on){ b.className = 'badge-green'; b.innerText = `Auto-refresh: ON — next ${countdown}s`; }
+  else { b.className = 'badge-red'; b.innerText = 'Auto-refresh: OFF'; }
+}
 
-  const tbody = el("scenarioTable").querySelector("tbody");
-  tbody.innerHTML = "";
+function startAuto(){
+  if(refreshTimer) return;
+  setBadge(true);
+  countdown = 10;
+  countdownInt = setInterval(()=> {
+    countdown--;
+    if(countdown <= 0) countdown = 10;
+    $('refreshBadge').innerText = `Auto-refresh: ON — next ${countdown}s`;
+  }, 1000);
+  refreshTimer = setInterval(async ()=> {
+    flog('Auto-refresh tick — fetching sell premiums');
+    await fetchLive(true);
+    countdown = 10;
+  }, 10000);
+}
 
+function stopAuto(){
+  if(!refreshTimer) return;
+  clearInterval(refreshTimer); refreshTimer = null;
+  clearInterval(countdownInt); countdownInt = null;
+  setBadge(false);
+}
+
+$('liveToggle').addEventListener('change', (e)=>{
+  flog('Live toggle ' + (e.target.checked ? 'ON' : 'OFF'));
+  if(e.target.checked && $('autoRefresh').checked) startAuto();
+  if(!e.target.checked) stopAuto();
+});
+$('autoRefresh').addEventListener('change', (e)=>{
+  if(e.target.checked && $('liveToggle').checked) startAuto();
+  else stopAuto();
+});
+
+$('fetchBtn').addEventListener('click', ()=> fetchLive(false));
+$('fetchAllBtn').addEventListener('click', ()=> fetchLive(true));
+
+function buildScenarioTable(){
+  const scp = Number($('sellCallPrem').innerText) || 0;
+  const spp = Number($('sellPutPrem').innerText) || 0;
+  const hcp = Number($('hedgeCallPrem').innerText) || 0;
+  const hpp = Number($('hedgePutPrem').innerText) || 0;
+  const lot = 50;
+  const spot = Number($('spot').value) || 0;
   const moves = [100,200,300,400,500,600,700,800,900];
-  const full = [...moves, ...moves.map(m=>-m)];
-
-  full.forEach(move => {
-    const newSpot = spot + move;
-    let pnl = (cp + pp);
-
-    if(newSpot > ceStrike) pnl -= (newSpot - ceStrike);
-    if(newSpot < peStrike) pnl -= (peStrike - newSpot);
-
-    pnl *= lot;
-
-    const cls = pnl >= 0 ? "text-profit" : "text-loss";
-
-    tbody.innerHTML += `
-      <tr>
-        <td>${move >= 0 ? "+"+move : move}</td>
-        <td>${newSpot}</td>
-        <td class="${cls}">${Math.round(pnl)}</td>
-      </tr>`;
+  const all = [...moves, ...moves.map(m=>-m)];
+  let html = '<table class="table table-sm"><thead><tr><th>Move</th><th>New Spot</th><th>P&L per lot (₹)</th></tr></thead><tbody>';
+  all.forEach(m => {
+    const ns = spot + m;
+    let unit = (scp + spp);
+    if(ns > Number($('sellCall').value)) unit -= (ns - Number($('sellCall').value));
+    if(ns < Number($('sellPut').value)) unit -= (Number($('sellPut').value) - ns);
+    const pnl = Math.round(unit * lot);
+    html += `<tr><td>${m>=0? '+'+m : m}</td><td>${ns}</td><td class="${pnl>=0? 'text-profit':'text-loss'}">${pnl}</td></tr>`;
   });
+  html += '</tbody></table>';
+  $('scenarioArea').innerHTML = html;
+  flog('Scenario table updated');
+}
 
-  log("Scenario updated");
-};
-
-log("Tool loaded successfully.");
+setBadge(false);
+flog('Tool ready — Auto-refresh OFF by default.');
 </script>
-
 </body>
 </html>
